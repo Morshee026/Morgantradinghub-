@@ -1,0 +1,84 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.express as px
+
+# -------------------------------
+# App Branding
+# -------------------------------
+st.set_page_config(
+    page_title="Morgan Trading Hub",
+    page_icon="assets/morgan_icon.png",
+    layout="wide"
+)
+
+st.image("assets/morgan_splash.png", use_column_width=True)
+st.title("📊 Morgan Trading Hub - Digit Psychology & Bias Analyzer")
+st.image("assets/poster_header.png", use_column_width=True)
+
+st.markdown("Welcome to the Morgan Trading Hub dashboard! This analyzer helps track digit bias, psychology indicators, and entry rules.")
+
+# -------------------------------
+# Digit Bias Calculation
+# -------------------------------
+st.subheader("Digit Bias Calculator")
+
+# Example simulated digit counts (replace with live API data later)
+digit_counts = np.random.randint(20, 100, size=10)
+digits = list(range(10))
+bias_df = pd.DataFrame({"Digit": digits, "Count": digit_counts})
+bias_df["Bias %"] = (bias_df["Count"] / bias_df["Count"].sum()) * 100
+
+st.dataframe(bias_df)
+
+# Highlight strong bias
+strong_bias = bias_df[bias_df["Bias %"] > 30]
+if not strong_bias.empty:
+    st.success(f"Strong bias detected: {strong_bias['Digit'].tolist()}")
+
+# -------------------------------
+# Psychology Filters
+# -------------------------------
+st.subheader("Psychology Indicators")
+
+# Simulated values (replace with real calculations later)
+macd = np.random.choice(["Flat", "Trending"])
+rsi = np.random.randint(20, 80)
+alma_trend = np.random.choice(["Sideways", "Uptrend", "Downtrend"])
+candle_type = np.random.choice(["Doji", "Hammer", "Engulfing"])
+
+st.write(f"MACD: {macd}")
+st.write(f"RSI: {rsi}")
+st.write(f"ALMA Trend: {alma_trend}")
+st.write(f"Candle Type: {candle_type}")
+
+# -------------------------------
+# Entry Decision Engine
+# -------------------------------
+st.subheader("Entry Checklist")
+
+conditions = {
+    "Bias > 30%": not strong_bias.empty,
+    "MACD Flat": macd == "Flat",
+    "RSI between 40-60": 40 <= rsi <= 60,
+    "ALMA Sideways": alma_trend == "Sideways",
+    "Safe Candle": candle_type in ["Doji", "Hammer"]
+}
+
+for cond, passed in conditions.items():
+    st.write(f"{cond}: {'✅' if passed else '❌'}")
+
+if all(conditions.values()):
+    st.success("✅ Entry conditions met! Safe to trade.")
+else:
+    st.error("❌ Conditions not met. Avoid trading.")
+
+# -------------------------------
+# Performance Tracker
+# -------------------------------
+st.subheader("Performance Tracker")
+wins = st.number_input("Number of Wins", min_value=0)
+losses = st.number_input("Number of Losses", min_value=0)
+if wins + losses > 0:
+    win_rate = wins / (wins + losses) * 100
+    st.metric("Win Rate (%)", f"{win_rate:.2f}")
